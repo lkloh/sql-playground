@@ -68,11 +68,10 @@ def update_pay_of_list_of_people(conn):
 		# actual update
 		# update_query = "REPLACE INTO employees (firstname, salary, bonus) VALUES ('John', 120, 20)"
 		update_query = '''
-			UPDATE employees
-			SET salary = ?, bonus = ?
-			WHERE firstname = ?
+			INSERT INTO employees (firstname, lastname, salary, bonus)
+			VALUES ('John', 'Doe', 120, 20)
 		'''
-		c.execute(update_query, (120, 20, 'John'))
+		c.execute(update_query)
 		print_db(conn)
 
 def experiment(conn):
@@ -88,7 +87,7 @@ if __name__ == '__main__':
 		c.execute('''
     		CREATE TABLE IF NOT EXISTS employees 
     		(
-    			firstname text PRIMARY KEY,
+    			firstname text PRIMARY KEY ON CONFLICT REPLACE,
     			lastname text,
     			salary int,
     			bonus int
