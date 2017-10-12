@@ -40,14 +40,11 @@ def insert_row(conn):
 
 def print_db(conn):
 	c = conn.cursor()
-	db = c.execute('''
-		SELECT * 
-		FROM stocks
-	''')
-	print '\n************************************'
+	db = c.execute('''SELECT * FROM stocks''')
+	print '\n\n************************************'
 	for row in db:
 		print row
-	print '************************************\n'
+	print '************************************\n\n'
 
 def update_pay_by_first_name(conn):
 	c = conn.cursor()
@@ -56,29 +53,19 @@ def update_pay_by_first_name(conn):
 		('Alice', 'Anderson', 95, 20),
 		('Bob', 'Brown', 85, 30)
 	]
-	c.execute('''
-		INSERT INTO stocks (firstname, lastname, salary, bonus)
-		VALUES
-			('John', 'Doe', '120', '20'),
-			('Alice', 'Anderson', '95', '20'),
-			('Bob', 'Brown', '85', '30')
-		ON DUPLICATE KEY UPDATE
-			salary=VALUES(salary), bonus=VALUES(bonus)
+	c.executescript('''
+		UPDATE stocks
+		SET salary = 120, bonus = 20
+		WHERE firstname = 'John' AND lastname = 'Doe'
 	''')
 	conn.commit()
-
+	print_db(conn)
 
 
 if __name__ == '__main__':
 	conn = create_connection('example.db')
 	experiment(conn)
 	close_connection(conn)
-
-
-
-
-
-
 
 
 
