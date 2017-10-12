@@ -74,18 +74,19 @@ def update_pay_of_list_of_people(conn):
 		('Alice', 'Anderson', 95, 20),
 		('Bob', 'Brown', 85, 30)
 	]
-	update_names_list = tuple(map(lambda row: row[0], update_list_all))
-	print update_names_list
-	# print '''SELECT * FROM STOCKS WHERE firstname IN %s''' % str(update_names_list)
+	update_names_list = map(lambda row: row[0], update_list_all)
 
 	# c.execute('''SELECT * FROM STOCKS WHERE firstname IN %s''' % str(update_names_list))
-	c.execute('''
-		SELECT * FROM STOCKS 
-		WHERE firstname IN (?, ?, ?)''', 
-		update_names_list
-	)
-	result = c.fetchall()
-	print result
+	if len(update_names_list) > 0:
+		query = '''
+			SELECT * FROM STOCKS 
+			WHERE firstname IN ('''
+		for _ in range(len(update_names_list)-1):
+			query += '?, '
+		query += '?)'
+		c.execute(query, update_names_list)
+		result = c.fetchall()
+		print result
 
 
 
