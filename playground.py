@@ -1,6 +1,7 @@
 import sqlite3
+import os
 
-
+SQDB_TMP = '/tmp/example.db'
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -21,13 +22,15 @@ def create_connection(db_file):
     	raise
 
 def close_connection(conn):
+    os.remove(SQDB_TMP)
     conn.close()
 
 
 
 def experiment(conn):
 	insert_row(conn)
-	update_pay_by_first_name(conn)
+	update_pay_of_one_person(conn)
+	update_pay_of_list_of_people(conn)
 
 def insert_row(conn):
 	c = conn.cursor()
@@ -46,14 +49,8 @@ def print_db(conn):
 		print row
 	print '************************************\n\n'
 
-def update_pay_by_first_name(conn):
+def update_pay_of_one_person(conn):
 	c = conn.cursor()
-	update_list = [
-		('John', 'Doe', 120, 20),
-		('Alice', 'Anderson', 95, 20),
-		('Bob', 'Brown', 85, 30)
-	]
-
 	# check that the primary key is present first
 	entry_in_db = c.execute('''
 		SELECT count(*) 
@@ -68,12 +65,21 @@ def update_pay_by_first_name(conn):
 			WHERE firstname = 'John' AND lastname = 'Doe'
 		''')
 		conn.commit()
-
 	print_db(conn)
+
+def update_pay_of_list_of_people(conn):
+	c = conn.cursor()
+	update_list = [
+		('John', 'Doe', 120, 20),
+		('Alice', 'Anderson', 95, 20),
+		('Bob', 'Brown', 85, 30)
+	]
+
+
 
 
 if __name__ == '__main__':
-	conn = create_connection('example.db')
+	conn = create_connection(SQDB_TMP)
 	experiment(conn)
 	close_connection(conn)
 
