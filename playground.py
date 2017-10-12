@@ -69,7 +69,9 @@ def update_pay_of_list_of_people(conn):
 		# update_query = "REPLACE INTO employees (firstname, salary, bonus) VALUES ('John', 120, 20)"
 		update_query = '''
 			INSERT INTO employees (firstname, lastname, salary, bonus)
-			VALUES ('John', 'Doe', 120, 20)
+			VALUES 
+				('John', 'Doe', 120, 20),
+				('Alice', 'Anderson', 95, 20)
 		'''
 		c.execute(update_query)
 		print_db(conn)
