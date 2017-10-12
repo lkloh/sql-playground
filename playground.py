@@ -59,7 +59,7 @@ def update_pay_of_one_person(conn):
 	''')
 	result = c.fetchall()
 	if result[0][0] == 1:
-		c.executescript('''
+		c.execute('''
 			UPDATE stocks
 			SET salary = 120, bonus = 20
 			WHERE firstname = 'John' AND lastname = 'Doe'
@@ -69,11 +69,24 @@ def update_pay_of_one_person(conn):
 
 def update_pay_of_list_of_people(conn):
 	c = conn.cursor()
-	update_list = [
+	update_list_all = [
 		('John', 'Doe', 120, 20),
 		('Alice', 'Anderson', 95, 20),
 		('Bob', 'Brown', 85, 30)
 	]
+	update_names_list = tuple(map(lambda row: row[0], update_list_all))
+	print update_names_list
+	# print '''SELECT * FROM STOCKS WHERE firstname IN %s''' % str(update_names_list)
+
+	# c.execute('''SELECT * FROM STOCKS WHERE firstname IN %s''' % str(update_names_list))
+	c.execute('''
+		SELECT * FROM STOCKS 
+		WHERE firstname IN (?, ?, ?)''', 
+		update_names_list
+	)
+	result = c.fetchall()
+	print result
+
 
 
 
