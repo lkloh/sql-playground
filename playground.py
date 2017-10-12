@@ -53,12 +53,22 @@ def update_pay_by_first_name(conn):
 		('Alice', 'Anderson', 95, 20),
 		('Bob', 'Brown', 85, 30)
 	]
-	c.executescript('''
-		UPDATE stocks
-		SET salary = 120, bonus = 20
+
+	# check that the primary key is present first
+	entry_in_db = c.execute('''
+		SELECT count(*) 
+		FROM stocks 
 		WHERE firstname = 'John' AND lastname = 'Doe'
 	''')
-	conn.commit()
+	result = c.fetchall()
+	if result[0][0] == 1:
+		c.executescript('''
+			UPDATE stocks
+			SET salary = 120, bonus = 20
+			WHERE firstname = 'John' AND lastname = 'Doe'
+		''')
+		conn.commit()
+
 	print_db(conn)
 
 
