@@ -3,34 +3,6 @@ import os
 
 SQDB_TMP = '/tmp/example.db'
 
-def create_connection(db_file):
-    """ create a database connection to a SQLite database """
-    try:
-    	conn = sqlite3.connect(db_file)
-    	c = conn.cursor()
-    	c.execute('''
-    		CREATE TABLE IF NOT EXISTS stocks 
-    		(
-    			firstname text,
-    			lastname text,
-    			salary int,
-    			bonus int,
-    			PRIMARY KEY(firstname, lastname)
-    		)''')
-    	return conn
-    except:
-    	raise
-
-def close_connection(conn):
-    os.remove(SQDB_TMP)
-    conn.close()
-
-
-
-def experiment(conn):
-	insert_row(conn)
-	update_pay_of_one_person(conn)
-	update_pay_of_list_of_people(conn)
 
 def insert_row(conn):
 	c = conn.cursor()
@@ -74,44 +46,43 @@ def update_pay_of_list_of_people(conn):
 		('Alice', 'Anderson', 95, 20),
 		('Bob', 'Brown', 85, 30)
 	]
-	update_names_list = map(lambda row: row[0], update_list_all)
+	update_names_tuple = map(lambda row: row[0], update_list_all)
 
 	# c.execute('''SELECT * FROM STOCKS WHERE firstname IN %s''' % str(update_names_list))
-	if len(update_names_list) > 0:
+	if len(update_names_tuple) > 0:
 		query = '''
 			SELECT * FROM STOCKS 
 			WHERE firstname IN ('''
-		for _ in range(len(update_names_list)-1):
+		for _ in range(len(update_names_tuple)-1):
 			query += '?, '
 		query += '?)'
-		c.execute(query, update_names_list)
+		c.execute(query, update_names_tuple)
 		result = c.fetchall()
 		print result
 
-
-
+def experiment(conn):
+	insert_row(conn)
+	update_pay_of_one_person(conn)
+	update_pay_of_list_of_people(conn)
 
 
 if __name__ == '__main__':
-	conn = create_connection(SQDB_TMP)
-	experiment(conn)
-	close_connection(conn)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	try:
+		conn = sqlite3.connect(SQDB_TMP)
+		c = conn.cursor()
+		c.execute('''
+    		CREATE TABLE IF NOT EXISTS stocks 
+    		(
+    			firstname text,
+    			lastname text,
+    			salary int,
+    			bonus int,
+    			PRIMARY KEY(firstname, lastname)
+    		)''')
+		experiment(conn)
+		conn.close()
+	except:
+		raise
+	finally:
+		if os.path.isfile(SQDB_TMP):
+			os.remove(SQDB_TMP)
