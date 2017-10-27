@@ -33,7 +33,7 @@ def update_pay_of_one_person(conn):
 	if result[0][0] == 1:
 		c.execute('''
 			UPDATE employees
-			SET salary = 120, bonus = 20
+			SET salary = 35, bonus = -5
 			WHERE firstname = 'John' AND lastname = 'Doe'
 		''')
 		conn.commit()
@@ -78,7 +78,7 @@ def update_pay_of_list_of_people(conn):
 
 def experiment(conn):
 	insert_row(conn)
-	# update_pay_of_one_person(conn)
+	update_pay_of_one_person(conn)
 	update_pay_of_list_of_people(conn)
 
 
